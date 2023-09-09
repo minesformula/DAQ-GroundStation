@@ -21,6 +21,6 @@
 
 void shipData(std::ifstream &fileIn);
 
-void submitToInflux(std::vector<std::string> measurements, std::vector<std::string> units, std::vector<double> &values);
+void submitToInflux(std::vector<std::string> &measurements, std::vector<double> &values);
 
 #endif

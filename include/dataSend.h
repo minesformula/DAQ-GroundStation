@@ -31,6 +31,6 @@ public:
 private:
     std::vector<influxdb::Point> sensorValues;
     std::string URI = std::string("http://") + INFLUX_USER + std::string(":") + INFLUX_PASS + std::string("@") + INFLUX_HOST + std::string(":8086?db=") + INFLUX_BUCKET;
-}
+};
 
 #endif
