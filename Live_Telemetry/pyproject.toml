@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "mflivetelemetry"
+version = "0.0.1"
+description = "Live Telemetry for the Mines Formula Custom DAQ System"
+authors = ["Aneurin Toomey <atoomey@mines.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+influxdb-client = "^1.37.0"
+pyserial = "^3.5"
+click = "^8.1.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+mfget = "mflivetelemetry:cli"
