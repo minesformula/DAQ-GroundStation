@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mflivetelemetry"
-version = "0.0.1"
+version = "0.1.0"
 description = "Live Telemetry for the Mines Formula Custom DAQ System"
 authors = ["Aneurin Toomey <atoomey@mines.edu>"]
 readme = "README.md"
