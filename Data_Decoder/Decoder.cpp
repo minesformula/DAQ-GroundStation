@@ -36,27 +36,17 @@ int main(int argc, char *argv[]){
     procFile << "time,type,sensor_number,value\n";
 
     while (!aFile.eof()){
-
         LogMsg* readMsg = new LogMsg;
-
         uint8_t buf[sizeof(LogMsg)];
+
+
+        //Converting buffer to LogMsg. Can't cast directly for memory safety. 
+        //Note there are some padding zeroes for some reason
         aFile.read((char*)buf, sizeof(LogMsg));
-
-        /*
-        std::cout << "MSG: ";
-        for (unsigned int i = 0; i < sizeof(LogMsg); i++){
-            std::cout << +buf[i] << " ";
-        }
-        std::cout << std::endl;
-        */
-
         readMsg->type = (Sensors) buf[0];
-
         readMsg->sensorNum = (int)buf[1];
-
         readMsg->CANID = (uint16_t)buf[16] |
             (uint16_t)buf[17] << 8;
-
         readMsg->timestamp = (uint32_t)buf[12] | 
             (uint32_t)buf[13] << 8 | 
             (uint32_t)buf[14] << 16 | 
@@ -66,6 +56,7 @@ int main(int argc, char *argv[]){
             readMsg->buf[i] = buf[i+2];
         }
 
+        //TODO: Write a class to write the message raw or in csv format
         procFile << processMsgCsv(*readMsg);
 
         rawFile << readMsg->timestamp << "," << typeToString(readMsg->type) 
