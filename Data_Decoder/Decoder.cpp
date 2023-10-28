@@ -64,10 +64,6 @@ int main(int argc, char *argv[]){
 
         for (unsigned int i = 0; i < 8; i++){
             readMsg->buf[i] = buf[i+2];
-
-            if (!(i+1 >= 8)){
-                rawFile << ",";
-            }
         }
 
         procFile << processMsgCsv(*readMsg);
