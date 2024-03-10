@@ -9,6 +9,8 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 def cli(portname) -> None:
 
     ser: Serial
+    posNames: dict = {}
+    
 
     ser = Serial(portname, 57600)
     
@@ -21,24 +23,24 @@ def cli(portname) -> None:
 
     client: InfluxDBClient
 
+    client = InfluxDBClient(url="http://104.131.85.212:8086", token="wVLmmRiwtodmVZeBchKrCzFN7tMiGsS9Jp4haaTOYvS6yZ2F7fjMMSyV_3ZKpq8HjRpyCBrPeTAK9CkkHvZUQw==")
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+
     while(True):
-        point: list[str] = str(ser.readline().decode()).split(" ")
+        point: list[str] = str(ser.readline().decode()).split(",")
 
-        for a in point:
-            print(a)
+        if (point[0] == "1050"):
+            names = []
+            for i in range(2,len(point)):
+                names.append(point[i])
 
-        bucket = "daqlive"
+            posNames.update({point[1], names})
 
-        client = InfluxDBClient(url="http://104.131.85.212:8086", token="wVLmmRiwtodmVZeBchKrCzFN7tMiGsS9Jp4haaTOYvS6yZ2F7fjMMSyV_3ZKpq8HjRpyCBrPeTAK9CkkHvZUQw==")
-        write_api = client.write_api(write_options=SYNCHRONOUS)
-
-        #Index 0 will be the name of the related object (E.X: Engine, Suspension, etc)
-        #Index 1 will be the data source (E.X: ECU, PDM, Hall_Effects_1)
-        #Index 2 will be units
-        #Index 3 will be the value
-        p = Point(point[0]).tag("Data_Source", point[1]).field(point[2], float(point[3]))
-
-        write_api.write(bucket="daqlive", record=p, org="minesformula", )
+        elif (point[0] == "1051"):
+            for i in range(0,len(posNames[point[0]])):
+                names.append(point[i])
+                p = Point(point[1]).tag("Data_Source", point[1]).field(posNames[point[1]][i], float(point[i+2]))
+                write_api.write(bucket="daqlive", record=p, org="minesformula")
 
 if (__name__ == "__main__"):
     cli()
