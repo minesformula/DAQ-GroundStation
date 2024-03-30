@@ -26,8 +26,18 @@ def cli(portname) -> None:
     client = InfluxDBClient(url="http://104.131.85.212:8086", token="wVLmmRiwtodmVZeBchKrCzFN7tMiGsS9Jp4haaTOYvS6yZ2F7fjMMSyV_3ZKpq8HjRpyCBrPeTAK9CkkHvZUQw==")
     write_api = client.write_api(write_options=SYNCHRONOUS)
 
+
     while(True):
-        point: list[str] = str(ser.readline().decode()).replace('\n', '').replace('\r', '').split(",")
+        try:
+            point: list[str] = str(ser.readline().decode()).replace('\n', '').replace('\r', '').split(",")
+        except:
+            print("Waiting")
+            while(not ser.is_open):
+                ser.open()
+
+            print("Serial Acquired")
+            continue
+
         print(point)
 
         if (point[0] == "0"):
