@@ -30,4 +30,5 @@ you set in the config
 Any data pushed to InfluxDB may be queried using the [Flux query language](https://docs.influxdata.com/flux/v0/).
 Within this project there are a few packages which can help with pushing data such as the [Live Telemetry](Live_Telemetry)
 python script. Note all of these packages need an API token to be configured, new API tokens can be generated in
-the InfluxDB GUI located at `localhost:8086`.
+the InfluxDB GUI located at `localhost:8086`. InfluxDB and Grafana are exposed to external connections from your
+network this means anybody on the same wifi as your computer may connect to InfluxDB or Grafana.
