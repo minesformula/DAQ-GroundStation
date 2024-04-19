@@ -1,5 +1,6 @@
 from serial import Serial
 import click
+import importlib.metadata as metadata
 
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import ASYNCHRONOUS
@@ -8,11 +9,16 @@ import os
 from pathlib import Path
 
 
-@click.group()
-def cli():
+@click.group(invoke_without_command=True)
+@click.option("-v", "--version", is_flag=True, help="Display Package Version")
+def cli(version):
+    if(version):
+        click.echo("MFLiveTelemetry\nVer " + metadata.version('mflivetelemetry'))
+        exit(1)
+
     pass
 
-@click.command()
+@click.command(help = "Configure API key for InfluxDB writing")
 @click.argument('api_key', required=True)
 def configure(api_key:str) -> None:
     directoryName:str
@@ -29,7 +35,7 @@ def configure(api_key:str) -> None:
         f.write(api_key)
         
 
-@click.command()
+@click.command(help = "Enable DAQ Live Telemetry reading from a specified serial port")
 @click.argument('portName', required=True, type=click.Path())
 @click.option('-k', "--key", "key", type=click.STRING)
 def live(portname, key:str) -> None:
