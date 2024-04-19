@@ -2,14 +2,53 @@ from serial import Serial
 import click
 
 from influxdb_client import InfluxDBClient, Point
-from influxdb_client.client.write_api import SYNCHRONOUS
+from influxdb_client.client.write_api import ASYNCHRONOUS
+
+import os
+from pathlib import Path
+
+
+@click.group()
+def cli():
+    pass
+
+@click.command()
+@click.argument('api_key', required=True)
+def configure(api_key:str) -> None:
+    directoryName:str
+
+    if (str(os.name) == "nt"):
+        directoryName = "~mfconfig"
+    else:
+        directoryName = ".mfconfig"
+
+    if (not os.path.exists(Path.home() / directoryName)):
+        os.mkdir(Path.home() / directoryName)
+    
+    with open(Path.home() / directoryName / "influxdb_config", mode='w') as f:
+        f.write(api_key)
+        
 
 @click.command()
 @click.argument('portName', required=True, type=click.Path())
-def cli(portname) -> None:
+@click.option('-k', "--key", "key", type=click.STRING)
+def live(portname, key:str) -> None:
 
     ser: Serial
     posNames: dict = {}
+    key: str
+
+    if (not key):
+        try:
+            if (str(os.name) == "nt"):
+                with open(Path.home() / "~mfconfig" / "influxdb_config") as f:
+                    key = f.readline()
+            else:
+                with open(Path.home() / ".mfconfig" / "influxdb_config") as f:
+                    key = f.readline()
+        except:
+            print("Error: Use configure command to add an API key or use the -k flag")
+            exit(-1)
     
 
     ser = Serial(portname, 57600)
@@ -23,19 +62,16 @@ def cli(portname) -> None:
 
     client: InfluxDBClient
 
-    client = InfluxDBClient(url="http://104.131.85.212:8086", token="wVLmmRiwtodmVZeBchKrCzFN7tMiGsS9Jp4haaTOYvS6yZ2F7fjMMSyV_3ZKpq8HjRpyCBrPeTAK9CkkHvZUQw==")
-    write_api = client.write_api(write_options=SYNCHRONOUS)
+    client = InfluxDBClient(url="http://localhost:8086", key=key)
+    write_api = client.write_api(write_options=ASYNCHRONOUS)
 
 
     while(True):
         try:
             point: list[str] = str(ser.readline().decode()).replace('\n', '').replace('\r', '').split(",")
         except:
-            print("Waiting")
             while(not ser.is_open):
                 ser.open()
-
-            print("Serial Acquired")
             continue
 
         print(point)
@@ -52,6 +88,9 @@ def cli(portname) -> None:
                 for i in range(0,len(posNames[point[1]])):
                     p = Point(str(point[1])).tag("SensorNum", str(point[2])).field(posNames[point[1]][i], float(point[i+3]))
                     write_api.write(bucket="daqlive", record=p, org="minesformula")
+
+cli.add_command(configure)
+cli.add_command(live)
 
 if (__name__ == "__main__"):
     cli()
