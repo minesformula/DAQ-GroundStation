@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   influxdb:
     image: influxdb:2.7.6
@@ -30,6 +28,8 @@ volumes:
   grafana_data:
     driver: local
   influx_data:
+    driver: local
+  influx2_data:
     driver: local
   influx_config:
     driver: local
