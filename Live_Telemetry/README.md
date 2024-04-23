@@ -10,8 +10,8 @@ your machine. You may have to ensure that the python installation directory is o
 ## Usage
 
 mflivetelemetry has two subcommands, configure and live. Before you run the live mode
-for the first time you should run `mflive configure <API_TOKEN>` where the
-`API_TOKEN` is your InfluxDB API token. This will create a hidden file in your home 
-directory to save the API token so it shouldn't need to be configured again. Alternatively 
-you may use the -k like `mflive live -k <API_TOKEN>` flag of the live subcommand 
-however your token will not save and you will have to enter it for every consecutive use.
+for the first time you should run `mflive configure <DEFAULT_USER> <DEFAULT_PASSWORD> <DEFAULT_ORGANIZATION> <DEFAULT_BUCKET> <API_TOKEN>`. This will create a hidden file in your home directory to save the API 
+token and other values so it shouldn't need to be configured again. Alternatively you 
+may use the flags to specify alternatives `mflive live -k <API_TOKEN>` flag of the live 
+subcommand however no information will not save and you will have to enter it for 
+every consecutive use.
