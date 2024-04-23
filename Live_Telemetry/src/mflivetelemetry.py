@@ -36,11 +36,7 @@ def configure(default_user:str, default_password:str, default_organization:str, 
         os.mkdir(Path.home() / directoryName)
     
     with open(Path.home() / directoryName / "influxdb_config", mode='w') as f:
-        f.write(api_key)
-        f.write(default_user)
-        f.write(default_password)
-        f.write(default_organization)
-        f.write(default_bucket)
+        f.write(api_key + "\n" + default_user + "\n" + default_password + "\n" + default_organization + "\n" + default_bucket)
         
 
 @click.command(help = "Enable DAQ Live Telemetry reading from a specified serial port")
@@ -76,7 +72,8 @@ def live(portname, bucket:str, organization:str, username:str, password:str, key
                 organization = lines[3]
             if not bucket:
                 bucket = lines[4]
-        except:
+        except Exception as e:
+            print(str(e))
             print("Error: Use configure command to add default values or use the flags")
             exit(-1)
     
