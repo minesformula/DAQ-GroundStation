@@ -17,8 +17,14 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=MFadmin
       - GF_SECURITY_ADMIN_PASSWORD=MFadmin
+      - GF_DASHBOARDS_MIN_REFRESH_INTERVAL=500ms
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_AUTH_BASIC_ENABLED=false
     volumes:
       - "grafana_data:/var/lib/grafana"
+      - "grafana_config:/etc/grafana"
     depends_on:
       - influxdb  
     links:
@@ -26,6 +32,8 @@ services:
 
 volumes:
   grafana_data:
+    driver: local
+  grafana_config:
     driver: local
   influx_data:
     driver: local
